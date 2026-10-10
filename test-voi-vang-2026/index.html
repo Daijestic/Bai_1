@@ -1,37 +1,64 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Test Voi Vàng — Sử dụng thuốc 1</title><style>
 *{box-sizing:border-box}body{font:16px/1.55 system-ui,sans-serif;margin:0;background:linear-gradient(#eaf1ff,#f7f9fd);color:#1b2a43}.wrap{max-width:840px;margin:auto;padding:20px 14px}h1{font-size:27px;line-height:1.3;margin:8px 0}.small{color:#6c7890;font-size:13px}.panel{background:white;border:1px solid #dae2ee;padding:20px;border-radius:20px;margin:14px 0;box-shadow:0 10px 25px #2540700a}.stats{display:flex;gap:8px}.stat{flex:1;background:white;border-radius:14px;text-align:center;padding:12px;border:1px solid #dfe7f1}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:#68758c}.toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}select,input[type=text],button{font:inherit;border:1px solid #d7e0ed;border-radius:11px;padding:10px;background:white;color:#243552}button{font-weight:700;cursor:pointer}.primary{background:#325dea;color:white}.soft{background:#edf2ff}button:disabled{opacity:.4;cursor:default}.meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#6c7890}.question{white-space:pre-line;font-size:19px;font-weight:700;margin:18px 0}.choice{display:flex;align-items:flex-start;gap:10px;margin:9px 0;padding:12px;border:1px solid #dde4ef;border-radius:12px;cursor:pointer}.choice:has(input:checked){background:#ebf1ff;border-color:#4168e9}.choice input{accent-color:#325dea;margin-top:5px}.bar{height:7px;border-radius:7px;background:#e0e9f5;margin:15px 0;overflow:hidden}.bar div{height:100%;background:#17a297}.warning{margin:12px 0;background:#fff7e8;border:1px solid #f1e0b7;border-radius:10px;padding:11px;color:#836027;font-size:13px}.answer{margin:15px 0;background:#eef9f6;border-left:4px solid #17a297;padding:14px;border-radius:10px}.buttons{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:18px}.buttons .side{display:flex;gap:8px}.center{text-align:center}.score{font-size:42px;font-weight:800;color:#138b80}footer{font-size:12px;color:#68758c;margin:20px 0}@media(max-width:600px){.wrap{padding:12px 9px}.panel{padding:14px}.toolbar{grid-template-columns:1fr 1fr}.toolbar button{grid-column:span 2}.question{font-size:17px}.stat span{font-size:11px}h1{font-size:24px}}
-</style></head><body><div class="wrap"><header><div class="small">Bộ đề luyện tập trực tuyến</div><h1>ÔN THI SỬ DỤNG THUỐC 1 — TEST VOI VÀNG</h1><div class="small">Đề 14 trang • Chấm điểm, xem giải thích và luyện lại câu sai</div></header><div class="stats"><div class="stat"><b>50</b><span>Trắc nghiệm</span></div><div class="stat"><b>75</b><span>Đúng / Sai</span></div><div class="stat"><b>18</b><span>Điền từ</span></div></div><div class="panel"><div class="toolbar"><select id="mode"><option value="all">Tất cả 143 câu</option><option value="mc">Trắc nghiệm</option><option value="tf">Đúng / Sai</option><option value="fill">Điền từ</option></select><select id="topic"><option value="all">Tất cả chủ đề</option></select><button class="soft" onclick="mix()">🔀 Trộn câu</button></div><div class="meta" style="margin-top:12px"><label><input type="checkbox" id="wrong" onchange="reset()"> Chỉ ôn câu sai</label><span id="status"></span></div></div><div class="bar"><div id="bar"></div></div><main class="panel" id="main">Đang tải câu hỏi…</main><footer>Nguồn: SDT1 test VV(2).pdf và giải test VV.pdf. Câu có đáp án lỗi thời hoặc thiếu chắc chắn được đánh dấu, một số câu không tính điểm. Không dùng các thông tin này thay cho hướng dẫn điều trị.</footer></div><script src="mc.js"></script><script src="tf.js"></script><script src="fill.js"></script><script>
-var bank=(window.VV_MC||[]).map(function(x){x.kind='mc';return x}).concat((window.VV_TF||[]).map(function(x){x.kind='tf';return x}),(window.VV_FILL||[]).map(function(x){x.kind='fill';return x}));
-var responses={},index=0,revealed=false,done=false,seed=0;try{responses=JSON.parse(localStorage.getItem('vv2026responses')||'{}')}catch(e){}
-function el(id){return document.getElementById(id)}
-function esc(x){return String(x===undefined?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function norm(x){return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9%]+/g,' ').trim()}
-function right(q){if(q.unscored)return null;var a=responses[q.id]||'';return q.kind==='fill'?norm(a)===norm(q.answer):a===q.answer}
-function filtered(){var m=el('mode').value,t=el('topic').value,w=el('wrong').checked;var arr=bank.filter(function(q){return (m==='all'||q.kind===m)&&(t==='all'||q.topic===t)&&(!w||right(q)===false&&!q.unscored)});if(seed)arr.sort(function(a,b){return order(a.id)-order(b.id)});return arr}
-function order(id){var h=seed;for(var i=0;i<id.length;i++)h=(Math.imul(h,37)+id.charCodeAt(i))|0;return h}
-function save(){try{localStorage.setItem('vv2026responses',JSON.stringify(responses))}catch(e){}}
-function change(v){var q=filtered()[index];if(!q)return;responses[q.id]=v;save();if(q.kind!=='fill')draw()}
-function reset(){index=0;done=false;revealed=false;draw()}
+.choice input[type=checkbox]{margin-top:5px;width:18px;height:18px;flex-shrink:0}.mini-title{font-size:13px;font-weight:750;color:#3261d7;margin:15px 0 6px}.reason-list{margin-top:12px}.reason{font-size:13px;padding:9px 2px;border-top:1px solid #cddfdc}.reason b{display:inline-block;margin-right:6px}.reason p{margin:3px 0 0;color:#4e6870} .small-tag{font-size:11px;color:#986923;font-weight:700;margin-left:7px} </style></head><body><div class="wrap"><header><div class="small">Bộ đề luyện tập trực tuyến</div><h1>ÔN THI SỬ DỤNG THUỐC 1 — TEST VOI VÀNG</h1><div class="small">50 câu trắc nghiệm · 15 nhóm Đúng/Sai · 18 câu điền từ · Chấm điểm và ôn câu sai</div></header><div class="stats"><div class="stat"><b>50</b><span>Trắc nghiệm</span></div><div class="stat"><b>15</b><span>Nhóm Đúng/Sai (75 ý)</span></div><div class="stat"><b>18</b><span>Điền từ</span></div></div><div class="panel"><div class="toolbar"><select id="mode"><option value="all">Tất cả 83 câu hỏi</option><option value="mc">Trắc nghiệm</option><option value="multi">Đúng/Sai — chọn nhiều đáp án</option><option value="fill">Điền từ</option></select><select id="topic"><option value="all">Tất cả chủ đề</option></select><button class="soft" onclick="mix()">🔀 Trộn câu</button></div><div class="meta" style="margin-top:12px"><label><input type="checkbox" id="wrong" onchange="reset()"> Chỉ ôn câu sai</label><span id="status"></span></div></div><div class="bar"><div id="bar"></div></div><main class="panel" id="main">Đang tải câu hỏi…</main><footer>Nguồn: SDT1 test VV(2).pdf và giải test VV.pdf. Câu có đáp án lỗi thời hoặc thiếu chắc chắn được đánh dấu, một số câu không tính điểm. Không dùng các thông tin này thay cho hướng dẫn điều trị.</footer></div><script src="mc.js"></script><script src="tf.js"></script><script src="fill.js"></script><script>
+
+const stemTitles={
+1:"Câu 1. Yếu tố ảnh hưởng đến sự hình thành cục máu đông (bộ ba Virchow) là:",
+2:"Câu 2. Các thuốc chống đông dùng trong giai đoạn cấp của huyết khối tĩnh mạch sâu bao gồm:",
+3:"Câu 3. Khi sử dụng enoxaparin cần giám sát ở những đối tượng bệnh nhân nào?",
+4:"Câu 4. Con đường vi khuẩn xâm nhập vào hệ thống tiết niệu là:",
+5:"Câu 5. Các kháng sinh được ưu tiên lựa chọn để điều trị NKTN ở nam do vi khuẩn Gram âm là:",
+6:"Câu 6. Chọn các nhận định đúng về tai – mũi – họng:",
+7:"Câu 7. Chọn các nhận định đúng về thuốc điều trị hen phế quản:",
+8:"Câu 8. Chọn các nhận định đúng về điều trị cơn hen cấp:",
+9:"Câu 9. Phương pháp chẩn đoán huyết khối tĩnh mạch sâu:",
+10:"Câu 10. Phẫu thuật lấy huyết khối được chỉ định khi:",
+11:"Câu 11. Chọn các nhận định đúng về đái tháo đường:",
+12:"Câu 12. Chọn các nhận định đúng về nguyên tắc điều trị đái tháo đường:",
+13:"Câu 13. Tiêu chuẩn chẩn đoán nhiễm khuẩn tiết niệu:",
+14:"Câu 14. Hội chứng viêm niệu đạo cấp có các biểu hiện:",
+15:"Câu 15. Phụ nữ trẻ bị NKTN dưới không biến chứng: chọn các phác đồ theo thời gian điều trị phù hợp:"
+};
+let bank=[...(window.VV_MC||[]).map(q=>({...q,kind:"mc",id:"MC-"+q.id})),...(window.VV_FILL||[]).map(q=>({...q,kind:"fill"}))];
+const tf=window.VV_TF||[], groupIds=[...new Set(tf.map(x=>x.group))];
+for(const num of groupIds){const items=tf.filter(x=>x.group===num);bank.push({id:"TFGROUP-"+num,kind:"multi",page:items[0]?.page||9,topic:items[0]?.topic||"Đúng/Sai",question:stemTitles[num]||"Câu "+num+". Chọn tất cả nhận định đúng:",options:items.map((x,j)=>({key:"ABCDE"[j],text:x.question,answer:x.answer,explanation:x.explanation,warning:!!x.warning,unscored:!!x.unscored})),warning:items.some(x=>x.warning||x.unscored),unscored:false})}
+let stored={};try{stored=JSON.parse(localStorage.getItem("vv2026responses_v3")||"{}")}catch(e){}
+let responses=stored&&typeof stored==="object"?stored:{}, index=0, revealed=false, finished=false,seed=0;
+const el=id=>document.getElementById(id);
+const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").toLowerCase().replace(/[^a-z0-9%]+/g," ").trim();
+function answer(q){return responses[q.id]}
+function isRight(q){if(q.unscored)return null;const a=answer(q);if(q.kind==="multi"){const chosen=Array.isArray(a)?a:[];return q.options.filter(o=>!o.unscored).every(o=>(chosen.includes(o.key))===(o.answer==="Đ"))}if(q.kind==="fill")return norm(a||"")===norm(q.answer);return a===q.answer}
+function save(){try{localStorage.setItem("vv2026responses_v3",JSON.stringify(responses))}catch(e){}}
+function hash(id){let v=seed;for(const c of id)v=(Math.imul(v,31)+c.charCodeAt(0))|0;return v}
+function selected(){const m=el("mode").value,t=el("topic").value,w=el("wrong").checked;const b=bank.filter(q=>(m==="all"||q.kind===m)&&(t==="all"||q.topic===t)&&(!w||!q.unscored&&isRight(q)===false));if(seed)b.sort((x,y)=>hash(x.id)-hash(y.id));return b}
+function change(v){const q=selected()[index];if(!q)return;responses[q.id]=v;save();if(q.kind!=="fill")draw()}
+function toggleMulti(key,checked){const q=selected()[index];if(!q)return;const previous=Array.isArray(responses[q.id])?responses[q.id]:[];responses[q.id]=checked?[...new Set([...previous,key])]:previous.filter(x=>x!==key);save();draw()}
+function reset(){index=0;revealed=false;finished=false;draw()}
 function mix(){seed++;reset()}
-function next(n){var arr=filtered();index=Math.max(0,Math.min(arr.length-1,index+n));revealed=false;draw();window.scrollTo(0,0)}
+function next(d){index=Math.max(0,Math.min(selected().length-1,index+d));revealed=false;draw();window.scrollTo(0,0)}
 function show(){revealed=!revealed;draw()}
-function submit(){done=true;draw();window.scrollTo(0,0)}
-function wrong(){el('wrong').checked=true;reset()}
-function again(){responses={};save();el('wrong').checked=false;seed++;reset()}
+function submit(){finished=true;draw();window.scrollTo(0,0)}
+function wrong(){el("wrong").checked=true;reset()}
+function again(){responses={};save();el("wrong").checked=false;seed++;reset()}
+function all(){el("wrong").checked=false;reset()}
 function draw(){
- var list=filtered(),q=list[Math.min(index,list.length-1)],scored=list.filter(function(x){return !x.unscored}),correct=scored.filter(function(x){return right(x)}).length,answered=list.filter(function(x){return !!responses[x.id]}).length;
- el('status').textContent='Đã trả lời '+answered+'/'+list.length;
- el('bar').style.width=(list.length?100*(index+1)/list.length:0)+'%';
- if(done){el('main').innerHTML='<div class="center"><h2>Kết quả ôn thi</h2><div class="score">'+correct+'/'+scored.length+'</div><p>Đúng '+(scored.length?Math.round(correct*100/scored.length):0)+'% câu tính điểm</p><p class="small">'+(list.length-scored.length)+' câu chưa chốt được loại khỏi điểm.</p><div class="buttons"><button onclick="wrong()" class="primary">Luyện câu sai</button><button onclick="done=false;draw()">Xem lại đề</button><button onclick="again()">Làm lại</button></div></div>';return}
- if(!q){el('main').innerHTML='<p>Không còn câu hỏi theo bộ lọc.</p><button onclick="el(\'wrong\').checked=false;reset()">Hiện tất cả</button>';return}
- var html='<div class="meta"><span>Câu '+(index+1)+'/'+list.length+' · '+(q.kind==='mc'?'Trắc nghiệm':q.kind==='tf'?'Đúng / Sai':'Điền từ')+'</span><span>Trang PDF '+q.page+'</span></div><div class="question">'+esc(q.question)+'</div>';
- if(q.kind==='mc')html+=q.options.map(function(o){return '<label class="choice"><input type="radio" name="a" '+(responses[q.id]===o.key?'checked':'')+' value="'+esc(o.key)+'" onchange="change(this.value)"><span><b>'+esc(o.key)+'.</b> '+esc(o.text)+'</span></label>'}).join('');
- else if(q.kind==='tf')html+='<label class="choice"><input type="radio" name="a" value="Đ" '+(responses[q.id]==='Đ'?'checked':'')+' onchange="change(this.value)"> Đúng</label><label class="choice"><input type="radio" name="a" value="S" '+(responses[q.id]==='S'?'checked':'')+' onchange="change(this.value)"> Sai</label>';
- else html+='<input type="text" style="width:100%" placeholder="Điền từ còn thiếu…" value="'+esc(responses[q.id]||'')+'" oninput="change(this.value)">';
- if(q.warning||q.unscored)html+='<div class="warning">⚠️ Đáp án hoặc cách hỏi có điểm cần lưu ý.'+(q.unscored?' Câu không tính điểm.':'')+'</div>';
- if(revealed){var label=q.kind==='mc'?(q.answer==='?'?'Không có phương án sai rõ ràng':q.answer+'. '+((q.options.find(function(x){return x.key===q.answer})||{}).text||'')):q.kind==='tf'?(q.answer==='Đ'?'Đúng':'Sai'):q.answer;html+='<div class="answer"><b>Đáp án theo file giải: '+esc(label)+'</b><p>'+esc(q.explanation||'')+'</p><small>'+ (right(q)===null?'Không tính điểm':right(q)?'✓ Chính xác':'✕ Chưa đúng')+'</small></div>'}
- html+='<div class="buttons"><button onclick="next(-1)" '+(index===0?'disabled':'')+'>← Trước</button><span class="side"><button class="soft" onclick="show()">'+(revealed?'Ẩn đáp án':'Xem đáp án')+'</button> <button onclick="next(1)" '+(index>=list.length-1?'disabled':'')+'>Tiếp →</button></span></div><div class="buttons"><span class="small">Tự lưu đáp án trên thiết bị</span><button class="primary" onclick="submit()">Nộp bài & xem điểm</button></div>';
- el('main').innerHTML=html;
-}
-var topics=[...new Set(bank.map(function(x){return x.topic}))].sort();topics.forEach(function(t){el('topic').add(new Option(t,t))});el('mode').onchange=reset;el('topic').onchange=reset;draw();
+ const list=selected(),q=list[Math.min(index,list.length-1)],scored=list.filter(x=>!x.unscored),pass=scored.filter(x=>isRight(x)===true).length,done=list.filter(x=>{const a=answer(x);return Array.isArray(a)?a.length>0:!!a}).length;el("status").textContent="Đã trả lời "+done+"/"+list.length;el("bar").style.width=(list.length?100*(index+1)/list.length:0)+"%";
+ if(finished){el("main").innerHTML='<div class="center"><h2>Kết quả ôn thi</h2><div class="score">'+pass+'/'+scored.length+'</div><p>Đúng '+(scored.length?Math.round(pass*100/scored.length):0)+'% câu tính điểm</p><p class="small">Mỗi nhóm Đúng/Sai được chấm như <b>một câu chọn nhiều đáp án</b>. Nhận định chưa chốt không ảnh hưởng điểm.</p><div class="buttons"><button onclick="wrong()" class="primary">Luyện câu sai</button><button onclick="finished=false;draw()">Xem lại đề</button><button onclick="again()">Làm lại</button></div></div>';return;}
+ if(!q){el("main").innerHTML='<p>Không còn câu hỏi theo bộ lọc.</p><button onclick="all()">Hiện tất cả</button>';return;}
+ const desc=q.kind==="mc"?"Trắc nghiệm (1 đáp án)":q.kind==="multi"?"Đúng/Sai — chọn nhiều đáp án":"Điền từ";
+ let html='<div class="meta"><span>Câu '+(index+1)+'/'+list.length+' · '+desc+'</span><span>Trang PDF '+q.page+'</span></div><div class="question">'+esc(q.question)+'</div>';
+ if(q.kind==="mc")html+=q.options.map(o=>'<label class="choice"><input type="radio" name="a" '+(answer(q)===o.key?"checked":"")+' value="'+esc(o.key)+'" onchange="change(this.value)"><span><b>'+esc(o.key)+'.</b> '+esc(o.text)+'</span></label>').join("");
+ else if(q.kind==="multi"){html+='<div class="mini-title">Tích tất cả phương án ĐÚNG. Có thể chọn nhiều đáp án.</div>';const selectedKeys=Array.isArray(answer(q))?answer(q):[];html+=q.options.map(o=>'<label class="choice"><input type="checkbox" '+(selectedKeys.includes(o.key)?"checked":"")+' onchange="toggleMulti(\''+esc(o.key)+'\',this.checked)"><span><b>'+o.key+'.</b> '+esc(o.text)+(o.unscored?'<span class="small-tag">(ý chưa chốt)</span>':'')+'</span></label>').join("")}
+ else html+='<input type="text" style="width:100%" placeholder="Nhập từ còn thiếu…" value="'+esc(answer(q)||"")+'" oninput="change(this.value)">';
+ if(q.warning||q.unscored)html+='<div class="warning">⚠️ Có nhận định hoặc đáp án cần lưu ý. Ý chưa chốt được loại khỏi tính điểm.</div>';
+ if(revealed){let a=q.kind==="mc"?(q.answer==="?"?"Không có phương án sai rõ ràng":q.answer+". "+(q.options.find(x=>x.key===q.answer)||{}).text):q.kind==="multi"?q.options.filter(x=>x.answer==="Đ"&&!x.unscored).map(x=>x.key).join(", ")||"Không có nhận định đúng chắc chắn":q.answer;
+ html+='<div class="answer"><b>Đáp án: '+esc(a)+'</b>';
+ if(q.kind==="multi"){html+='<div class="reason-list">'+q.options.map(o=>'<div class="reason"><b>'+o.key+'. '+(o.unscored?'Chưa chốt':o.answer==="Đ"?"Đúng":"Sai")+'</b> '+esc(o.explanation||"")+'</div>').join("")+'</div>';}
+ else html+='<p>'+esc(q.explanation||"")+'</p>';
+ html+='<small>'+(isRight(q)===null?"Không tính điểm":isRight(q)?"✓ Đúng toàn bộ câu":"✕ Cần ôn lại")+'</small></div>';}
+ html+='<div class="buttons"><button onclick="next(-1)" '+(index===0?"disabled":"")+'>← Trước</button><span class="side"><button class="soft" onclick="show()">'+(revealed?"Ẩn đáp án":"Kiểm tra đáp án")+'</button> <button onclick="next(1)" '+(index>=list.length-1?"disabled":"")+'>Tiếp →</button></span></div><div class="buttons"><span class="small">Đáp án được lưu trên thiết bị</span><button class="primary" onclick="submit()">Nộp bài & xem điểm</button></div>';el("main").innerHTML=html;
+ }
+for(const t of [...new Set(bank.map(x=>x.topic))].sort((a,b)=>a.localeCompare(b,"vi")))el("topic").add(new Option(t,t));el("mode").onchange=reset;el("topic").onchange=reset;draw();
+
 </script></body></html>
